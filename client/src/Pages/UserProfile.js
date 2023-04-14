@@ -6,27 +6,27 @@ import { Link } from "react-router-dom";
 import Wcard from "../WeatherComp/Wcard";
 const UserProfile = () => {
   const user = JSON.parse(localStorage.getItem("userInfo"));
-  const feedsInitial = [];
-  const [feeds, setFeeds] = useState(feedsInitial);
-  const getFeeds = async () => {
-    //API call
-    const response = await fetch("/api/feed/fetchallfeeds", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
-    const json = await response.json();
-    console.log(json);
-    setFeeds(json);
-  };
+  // const feedsInitial = [];
+  // const [feeds, setFeeds] = useState(feedsInitial);
+  // const getFeeds = async () => {
+  //   //API call
+  //   const response = await fetch("/api/feed/fetchallfeeds", {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${user.token}`,
+  //     },
+  //   });
+  //   const json = await response.json();
+  //   console.log(json);
+  //   setFeeds(json);
+  // };
 
-  console.log("hello");
+  // console.log("hello");
 
-  useEffect(() => {
-    getFeeds();
-  }, []);
+  // useEffect(() => {
+  //   getFeeds();
+  // }, []);
 
   //chat access page
 
@@ -66,9 +66,9 @@ const UserProfile = () => {
         <div className="userfeed">
           <div className="feedWrapper">
             {/* <Share /> */}
-            {feeds.map((p) => (
+            {/* {feeds.map((p) => (
               <Post key={p.id} post={p} />
-            ))}
+            ))} */}
           </div>
         </div>
         <Wcard />
