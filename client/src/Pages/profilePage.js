@@ -1,148 +1,102 @@
-// import React from 'react'
-// import "./profile.css";
-// function profilePage() {
-//   return (
-//     <div className='profile'>
-//         <div className='profileCover'>
-
-//         </div>
-//         <div className='profileImg'>
-
-//         </div>
-//         <div className='profileDetails'>
-//             <p>Bikramjit Das</p>
-//             <p>guwahati,Assam</p>
-//             <div className='profileMessage'>
-//                 <button className='message'>Message</button>
-//                 <p>Jan 2023</p>
-//             </div>
-//         </div>
-//     </div>
-//   )
-// }
-
-// export default profilePage
-
-// import React, { useEffect, useState } from "react";
-// import "./UserProfile.css";
-// import Navbar from "../components/UI/Navbar";
-// import { Link,useParams } from "react-router-dom";
-// import axios from "axios";
-// const Profile = () => {
-//   const user = JSON.parse(localStorage.getItem("userInfo"));
-//   const {userName}=useParams();
-//   //chat access page
-
-//   const config = {
-//     headers: {
-//       Authorization: `Bearer ${user.token}`,
-//     },
-//   };
-
-//   const  data  =  axios.get(`/api/user?search=${userName}`, config);
-//   const userdata=data.json();
-//   console.log(userdata);
-//   return (
-//     <>
-//       <Navbar />
-//       <div className="user-profile">
-//         <div className="user-info">
-//           <img src={data.pic} alt="User avatar" className="avatar" />
-//           <h3 className="username">{data.name}</h3>
-//           <p className="user-description">
-//             Agriculture enthusiast looking for an Agritech startup
-//           </p>
-//         </div>
-
-//         <div className="user-details">
-//           <div className="detail">
-//             <p className="detail-title">Location</p>
-//             <p className="detail-value">San Francisco, CA</p>
-//           </div>
-//           <div className="detail">
-//             <p className="detail-title">{data.email} </p>
-//           </div>
-//           <div className="detail">
-//             <p className="detail-title">Member since</p>
-//             <p className="detail-value">January 2020</p>
-//           </div>
-//           <div className="chatUser">
-//             <Link to="/chats">
-//               <button>Start Chat</button>
-//             </Link>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Profile;
-
-import React, { useEffect, useState } from "react";
-import "./UserProfile.css";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/UI/Navbar";
-import { Link, useParams } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@mui/material";
+import "./profile.css";
+import axios from "axios";
+// import Feed from "../components/feedpg/Feed";
+import Feed from "../components/feedpg/Feed";
+import Add from "../components/feedpg/Add";
+// import Post from "../components/feedpg/Post";
+function ProfilePage() {
+  const [blogs, setBlogs] = useState([]);
+  const [userdata, setUserdata] = useState({});
 
-const Profile = () => {
-  const user = JSON.parse(localStorage.getItem("userInfo"));
-  const { userName } = useParams();
-
-  const [userData, setUserData] = useState({});
+  let user = JSON.parse(localStorage.getItem("userInfo"));
+  const fetdata = async () => {
+    let user = JSON.parse(localStorage.getItem("userInfo"));
+    const res = await axios.get(`/api/blog/post/${user._id}`);
+    const data = res.data;
+    // console.log(data.blogs);
+    setBlogs(data.blogs);
+  };
+  const [blogsall, setBlogsall] = useState([]);
+  const fetchallblogs = async () => {
+    const res = await axios.get(`http://localhost:5000/api/blog/`);
+    // const res =await  axios.get(`/api/blog/`)
+    const data = res.data;
+    console.log(data.blogs);
+    setBlogsall(data.blogs);
+  };
+  useEffect(() => {
+    fetchallblogs();
+  }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`/api/user?search=${userName}`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          // "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      console.log(data);
-      setUserData(data);
-      console.log(userName);
-    };
-    fetchData();
-  }, [userName,user.token]);
+    fetdata();
+  }, []);
+  console.log(blogs);
 
-  if (!userData) {
-    return <p>Loading...</p>;
-  }
+  //fetch current user all details
+  const fetuser = async () => {
+    let user = JSON.parse(localStorage.getItem("userInfo"));
+    const res = await axios.get(`/api/user/getuser/${user._id}`);
+    const data = res.data;
+    // console.log(data.data);
+    setUserdata(data.data);
+  };
 
+  useEffect(() => {
+    fetuser();
+  }, []);
+  console.log(userdata);
+  //fetch user
+  const [mode, setMode] = useState("light");
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: mode,
+    },
+  });
   return (
-    <>
+    <div className="user-page">
       <Navbar />
-      <div className="user-profile">
-        <div className="user-info">
-          <img src={userData[0].pic} alt="User avatar" className="avatar" />
-          <h3 className="username">{userData[0].name}</h3>
-          <p className="user-description">
-            Agriculture enthusiast looking for an Agritech startup
-          </p>
-        </div>
-
-        <div className="user-details">
-          <div className="detail">
-            <p className="detail-title">Location</p>
-            <p className="detail-value">San Francisco, CA</p>
+      <div className="user-container">
+        <div className="profile-card">
+          <div className="cover-pic"></div>
+          <div className="profile-img">
+            <img src={user.pic} className="profile-pic" alt="profile-pic" />
           </div>
-          <div className="detail">
-            <p className="detail-title">{userData[0].email} </p>
+          <div className="user-info">
+            <p className="user-name">{user.name}</p>
+            <p className="user-city">{user.email}</p>
+            <div className="chat-info">
+              <p>
+                <Link to="/chats">
+                  <button className="messagebtn">Message</button>
+                </Link>
+              </p>
+              <p className="user-join">2020 jan</p>
+            </div>
           </div>
-          <div className="detail">
-            <p className="detail-title">Member since</p>
-            <p className="detail-value">January 2020</p>
-          </div>
-          <div className="chatUser">
-            <Link to="/chats">
-              <button>Start Chat</button>
-            </Link>
+          <p style={{ fontWeight: "bold", color: "black" }}>My post</p>
+          <ThemeProvider theme={darkTheme}>
+            <Add
+              user={userdata}
+              fetchposts={fetdata}
+              fetchallblogs={fetchallblogs}
+            />
+          </ThemeProvider>
+          <div className="user-feed">
+            <ThemeProvider theme={darkTheme}>
+              <Feed blogs={blogs} user={userdata} fetchposts={fetdata} />
+            </ThemeProvider>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
-};
+}
+// import Feed from '../components/feedpg/Feed';
 
-export default Profile;
+export default ProfilePage;
