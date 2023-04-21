@@ -3,7 +3,7 @@
 ## Installation and usage
 
 1. Clone this repository\
-    `git clone https://github.com/sinharitwick/GFG-Lofi_Devs.git`
+    `git clone https://github.com/Bikdistinct/Farmstack.git`
 2. Install dependencies\
     `cd server`  \
     `npm install`\
